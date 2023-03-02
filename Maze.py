@@ -297,3 +297,40 @@ class Maze:
                             labels[i][j] = labels[wall[1][0]][wall[1][1]]
 
         return m
+    
+    @classmethod
+    def gen_exploration(cls, h, w):
+        """
+        Génère un labyrinthe aléatoire selon l'algorithme de génération par exploration
+        Paramètres:
+            h, w : dimensions du labyrinthe
+        """
+        m = Maze(h, w, empty=False)
+        # On choisit une cellule au hasard
+        cell = (randint(0, h-1), randint(0, w-1))
+        # On la marque comme visitée
+        visited = [cell]
+        # Mettre cette cellule dans une pile
+        stack = [cell]
+        # Tant que la pile n'est pas vide
+        while len(stack) > 0:
+            # On extrait la cellule en haut de la pile
+            cell = stack.pop()
+            # On initialise les voisins non visités
+            notVisitedNeighbors = []
+            # Si cette cellule a des voisins non visités
+            for neighbor in m.get_contiguous_cells(cell):
+                if neighbor not in visited:
+                    notVisitedNeighbors.append(neighbor)
+            if len(notVisitedNeighbors) > 0:
+                # On la remet sur la pile
+                stack.append(cell)
+                # On choisit un voisin au hasard
+                neighbor = choice(notVisitedNeighbors)
+                # On supprime le mur entre la cellule et le voisin
+                m.remove_wall(cell, neighbor)
+                # On marque le voisin comme visité
+                visited.append(neighbor)
+                # On le met sur la pile
+                stack.append(neighbor)
+        return m
