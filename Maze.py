@@ -137,7 +137,7 @@ class Maze:
             Retourne la liste des murs du labyrinthe
             Retour:
                 walls (list) : liste de couples de cellules
-            """
+            
             ref = Maze(self.height, self.width, empty=True)
             walls = list(set((c1, c2) if c1 < c2 else (c2, c1)
                         for c1 in ref.neighbors.keys() for c2 in ref.neighbors[c1]))
@@ -146,7 +146,20 @@ class Maze:
                 for c2 in self.neighbors[c1]:
                     while (c1, c2) in walls:
                         walls.remove((c1, c2))
-            return walls
+            return walls"""
+            # Liste des murs
+            L = []
+            # Pour chaque cellule c1 de la grille
+            for c1 in self.neighbors.keys():
+                # Si la cellule c2 à droite de c1 est dans la grille et qu'elle n'est pas dans les voisins de c1
+                if c1[1] < self.width-1 and (c1[0], c1[1]+1) not in self.neighbors[c1]:
+                    # On ajoute le mur entre c1 et c2
+                    L.append((c1, (c1[0], c1[1]+1)))
+                # Si la cellule c2 en dessous de c1 est dans la grille et qu'elle n'est pas dans les voisins de c1
+                if c1[0] < self.height-1 and (c1[0]+1, c1[1]) not in self.neighbors[c1]:
+                    # On ajoute le mur entre c1 et c2
+                    L.append((c1, (c1[0]+1, c1[1])))
+            return L
     
     def fill(self):
         """
