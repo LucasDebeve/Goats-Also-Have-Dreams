@@ -538,3 +538,38 @@ class Maze:
                 int : distance de Manhattan entre c1 et c2
         """
         return abs(c1[0]-c2[0])+abs(c1[1]-c2[1])
+    
+    # Pour les besoins de l'interface graphique
+    # On convertit notre labyrinthe sous forme d'une tableau 2D
+    # contenant des 0 pour les murs et des 1 pour les cases vides
+    def get_mat(self):
+        """
+            Retourne la matrice représentant le labyrinthe, 0 pour un mur, 1 pour une cellule libre
+        """
+        # Initialisation de la matrice à 0
+        mat = []
+        for i in range(2*self.height+1):
+            mat.append([])
+            for j in range(2*self.width+1):
+                mat[i].append(1)
+        # On récupère la liste des murs
+        walls = self.get_walls()
+        # On place des 0 pour les bords
+        for i in range(2*self.height+1):
+            mat[i][0] = 0
+            mat[i][2*self.width] = 0
+        for j in range(2*self.width+1):
+            mat[0][j] = 0
+            mat[2*self.height][j] = 0
+            
+        # On ajoute des murs sur les diagonales des cellules
+        for i in range(2, 2*self.height, 2):
+            for j in range(2, 2*self.width, 2):
+                mat[i][j] = 0
+        # On met des 0 pour les murs
+        for wall in walls:
+            # On récupère la position du mur en calculant la moyenne des coordonnées des cellules adjacentes
+            i = int((2*wall[0][0]+1 + 2*wall[1][0]+1) / 2)
+            j = int((2*wall[0][1]+1 + 2*wall[1][1]+1) / 2)
+            mat[i][j] = 0
+        return mat
