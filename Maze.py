@@ -156,3 +156,17 @@ class Maze:
             while len(self.neighbors[c1]) > 0:
                 c2 = self.neighbors[c1].pop()
                 self.add_wall(c1, c2)
+
+    def empty(self):
+        """
+        Vide le labyrinthe en supprimant tous les murs
+        """
+        for c1 in self.neighbors.keys():
+            if c1[0] > 0:
+                self.remove_wall(c1, (c1[0]-1, c1[1]))
+            if c1[0] < self.height-1:
+                self.remove_wall(c1, (c1[0]+1, c1[1]))
+            if c1[1] > 0:
+                self.remove_wall(c1, (c1[0], c1[1]-1))
+            if c1[1] < self.width-1:
+                self.remove_wall(c1, (c1[0], c1[1]+1))
