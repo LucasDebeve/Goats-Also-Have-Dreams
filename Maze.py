@@ -131,3 +131,19 @@ class Maze:
             self.neighbors[c1].add(c2)
         if c1 not in self.neighbors[c2]:
             self.neighbors[c2].add(c1)
+    
+    def get_walls(self):
+            """
+            Retourne la liste des murs du labyrinthe
+            Retour:
+                walls (list) : liste de couples de cellules
+            """
+            ref = Maze(self.height, self.width, empty=True)
+            walls = list(set((c1, c2) if c1 < c2 else (c2, c1)
+                        for c1 in ref.neighbors.keys() for c2 in ref.neighbors[c1]))
+
+            for c1 in self.neighbors.keys():
+                for c2 in self.neighbors[c1]:
+                    while (c1, c2) in walls:
+                        walls.remove((c1, c2))
+            return walls
