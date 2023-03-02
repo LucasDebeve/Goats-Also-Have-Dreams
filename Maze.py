@@ -515,3 +515,14 @@ class Maze:
         chemin.append(start)
 
         return chemin
+    
+    def distance_geo(self, c1, c2):
+        """
+            Calcul la distance géodésique entre la cellule c1 et la cellule c2,
+            c'est à dire le nombre minimal de déplacements nécessaires pour aller de c1 à c2
+            Paramètres:
+                c1, c2 : cellules
+            Retour:
+                int : distance géodésique entre c1 et c2
+        """
+        return len(self.solve_bfs(c1, c2))-1
