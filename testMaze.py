@@ -14,4 +14,5 @@ print(laby.get_walls())
 # Test des méthodes de générations
 laby = Maze.gen_btree(4, 4)
 laby = Maze.gen_sidewinder(4, 4)
+laby = Maze.gen_fusion(4, 4)
 print(laby)

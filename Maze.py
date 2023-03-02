@@ -268,3 +268,32 @@ class Maze:
         for i in range(w-1):
             m.remove_wall((h-1, i), (h-1, i+1))
         return m
+    
+    @classmethod
+    def gen_fusion(cls, h, w):
+        """
+        Génère un labyrinthe aléatoire selon l'algorithme de génération de fusion
+        Paramètres:
+            h, w : dimensions du labyrinthe
+        """
+        m = Maze(h, w, empty=False)
+        # Labeliser les cellules avec un entier de 1 à h*w-1
+        labels = [[i for i in range((w*j)+1, (w*j)+w+1)] for j in range(0, h)]
+        # On extrait la liste de tous les murs et on les mélange
+        walls = m.get_walls()
+        shuffle(walls)
+
+        # Pour chaque mur
+        for wall in walls:
+            # Si les deux cellules n'ont pas le même label
+            if labels[wall[0][0]][wall[0][1]] != labels[wall[1][0]][wall[1][1]]:
+                # Supprimer le mur
+                m.remove_wall(wall[0], wall[1])
+                # Affecter le label de l'une des cellules à l'autre et à toutes celles qui ont le même label que la deuxième
+                label = labels[wall[0][0]][wall[0][1]]
+                for i in range(0, h):
+                    for j in range(0, w):
+                        if labels[i][j] == label:
+                            labels[i][j] = labels[wall[1][0]][wall[1][1]]
+
+        return m
