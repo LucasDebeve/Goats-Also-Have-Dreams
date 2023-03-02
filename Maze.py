@@ -372,3 +372,49 @@ class Maze:
             # On marque toutes les cellules de la marche comme visitées
             visited += path[:-1]
         return m
+
+    def overlay(self, content=None):
+        """
+        Rendu en mode texte, sur la sortie standard, \
+        d'un labyrinthe avec du contenu dans les cellules
+        Argument:
+            content (dict) : dictionnaire tq content[cell] contient le caractère à afficher au milieu de la cellule
+        Retour:
+            string
+        """
+        if content is None:
+            content = {(i, j): ' ' for i in range(self.height)
+                       for j in range(self.width)}
+        else:
+            content = content | {(i, j): ' ' for i in range(
+                self.height) for j in range(self.width) if (i, j) not in content}
+        txt = r""
+        # Première ligne
+        txt += "┏"
+        for j in range(self.width-1):
+            txt += "━━━┳"
+        txt += "━━━┓\n"
+        txt += "┃"
+        for j in range(self.width-1):
+            txt += " "+content[(0, j)]+" ┃" if (0, j +
+                                                1) not in self.neighbors[(0, j)] else " "+content[(0, j)]+"  "
+        txt += " "+content[(0, self.width-1)]+" ┃\n"
+        # Lignes normales
+        for i in range(self.height-1):
+            txt += "┣"
+            for j in range(self.width-1):
+                txt += "━━━╋" if (i+1,
+                                  j) not in self.neighbors[(i, j)] else "   ╋"
+            txt += "━━━┫\n" if (i+1, self.width -
+                                1) not in self.neighbors[(i, self.width-1)] else "   ┫\n"
+            txt += "┃"
+            for j in range(self.width):
+                txt += " "+content[(i+1, j)]+" ┃" if (
+                    i+1, j+1) not in self.neighbors[(i+1, j)] else " "+content[(i+1, j)]+"  "
+            txt += "\n"
+        # Bas du tableau
+        txt += "┗"
+        for i in range(self.width-1):
+            txt += "━━━┻"
+        txt += "━━━┛\n"
+        return txt
