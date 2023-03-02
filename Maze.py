@@ -147,3 +147,12 @@ class Maze:
                     while (c1, c2) in walls:
                         walls.remove((c1, c2))
             return walls
+    
+    def fill(self):
+        """
+        Remplissage du labyrinthe en ajoutant des murs entre toutes les cellules
+        """
+        for c1 in self.neighbors.keys():
+            while len(self.neighbors[c1]) > 0:
+                c2 = self.neighbors[c1].pop()
+                self.add_wall(c1, c2)
