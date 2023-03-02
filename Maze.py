@@ -418,3 +418,51 @@ class Maze:
             txt += "━━━┻"
         txt += "━━━┛\n"
         return txt
+    
+    def solve_dfs(self, start, stop):
+        """
+        Résout un labyrinthe en utilisant l'algorithme de recherche en profondeur
+        Paramètres:
+            start, stop : cellules de départ et d'arrivée
+        Retour:
+            list : liste des cellules du chemin trouvé
+        """
+        # Initialisation de la pile
+        pile = [start]
+        # Mémoriser l'élément prédécesseur de start comme étant start
+        pred = {start: set(start)}
+        # Tant qu'il reste des cellules non-marqués
+        while len(pred) < self.height * self.width:
+            # On extrait la première cellule
+            c = pile.pop()
+            # Si c'est la cellule d'arrivée
+            if c == stop:
+                # C'est terminé on a trouvé un chemin vers la cellule d'arrivée
+                break
+            else:
+                # Pour chaque cellule voisine de c
+                for neighbor in self.get_reachable_cells(c):
+                    # Si elle n'est pas marquée
+                    if neighbor not in pred:
+                        # La mettre dans la pile
+                        pile.append(neighbor)
+                        # On la marque
+                        # Mémoriser son prédécesseur
+                        if neighbor not in pred:
+                            pred[neighbor] = c
+                        else:
+                            pred[neighbor] = pred[neighbor] | c
+        # On reconstruit le chemin
+        chemin = []
+        # Initialiser c à A
+        c = stop
+        # Tant que c n'est pas D
+        while c != start:
+            # On ajoute c à la liste
+            chemin.append(c)
+            # On passe à son prédécesseur
+            c = pred[c]
+        # On ajoute la cellule de départ
+        chemin.append(start)
+
+        return chemin
