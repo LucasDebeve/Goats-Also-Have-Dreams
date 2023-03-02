@@ -170,3 +170,22 @@ class Maze:
                 self.remove_wall(c1, (c1[0], c1[1]-1))
             if c1[1] < self.width-1:
                 self.remove_wall(c1, (c1[0], c1[1]+1))
+    
+    def get_contiguous_cells(self, c):
+        """
+        Retourne la liste des cellules contiguës à une cellule donnée (sans s’occuper des éventuels murs)
+        Paramètre:
+            c (tuple) : cellule
+        Retour:
+            cellules (list) : liste de cellules contiguës
+        """
+        cells = []
+        if c[0] > 0:
+            cells.append((c[0]-1, c[1]))
+        if c[0] < self.height-1:
+            cells.append((c[0]+1, c[1]))
+        if c[1] > 0:
+            cells.append((c[0], c[1]-1))
+        if c[1] < self.width-1:
+            cells.append((c[0], c[1]+1))
+        return cells
