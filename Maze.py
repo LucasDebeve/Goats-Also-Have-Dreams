@@ -235,3 +235,36 @@ class Maze:
                 m.remove_wall(cell, toDelete)
 
         return m
+    
+    @classmethod
+    def gen_sidewinder(cls, h, w):
+        """
+        Génère un labyrinthe aléatoire selon l'algorithme de génération de Sidewinder
+        Paramètres:
+            h, w : dimensions du labyrinthe
+        """
+        """
+        Génère un labyrinthe aléatoire selon l'algorithme de génération de Sidewinder
+        Paramètres:
+            h, w : dimensions du labyrinthe
+        """
+        m = Maze(h, w, empty=False)
+        for i in range(h):
+            sequence = []
+            for j in range(w):
+                sequence.append((i, j))
+                if randint(0, 1) == 0:
+                    if j+1 < w:
+                        m.remove_wall((i, j), (i, j+1))
+                else:
+                    if i+1 < h:
+                        toDelete = choice(sequence)
+                        m.remove_wall(toDelete, (toDelete[0]+1, toDelete[1]))
+                    sequence = []
+            sequence.append((i, j))
+            toDelete = choice(sequence)
+            if toDelete[0]+1 < h:
+                m.remove_wall(toDelete, (toDelete[0]+1, toDelete[1]))
+        for i in range(w-1):
+            m.remove_wall((h-1, i), (h-1, i+1))
+        return m
