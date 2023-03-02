@@ -1,3 +1,4 @@
+from random import choice, randint, shuffle
 class Maze:
     """
     Classe Labyrinthe
@@ -213,3 +214,24 @@ class Maze:
         """
         neighbors = self.neighbors[c]
         return [cell for cell in self.get_contiguous_cells(c) if cell in neighbors]
+    
+    @classmethod
+    def gen_btree(cls, h, w):
+        """
+        Génère un labyrinthe aléatoire selon l'algorithme de génération par arbre binaire
+        Paramètres:
+            h, w : dimensions du labyrinthe
+        """
+        m = Maze(h, w, empty=False)
+        for cell in m.neighbors.keys():
+            deleteChoice = []
+            if (cell[0]+1, cell[1]) in m.get_contiguous_cells(cell) and (cell[0]+1, cell[1]) not in m.neighbors[cell]:
+                deleteChoice.append((cell[0]+1, cell[1]))
+            if (cell[0], cell[1]+1) in m.get_contiguous_cells(cell) and (cell[0], cell[1]+1) not in m.neighbors[cell]:
+                deleteChoice.append((cell[0], cell[1]+1))
+
+            if len(deleteChoice) > 0:
+                toDelete = choice(deleteChoice)
+                m.remove_wall(cell, toDelete)
+
+        return m
