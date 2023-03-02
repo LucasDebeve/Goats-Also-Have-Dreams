@@ -334,3 +334,41 @@ class Maze:
                 # On le met sur la pile
                 stack.append(neighbor)
         return m
+    
+    @classmethod
+    def gen_wilson(cls, h, w):
+        """
+        Génère un labyrinthe aléatoire selon l'algorithme de génération de Wilson
+        Paramètres:
+            h, w : dimensions du labyrinthe
+        """
+        m = Maze(h, w, empty=False)
+        # On choisit une cellule au hasard
+        cell = (randint(0, h-1), randint(0, w-1))
+        # On la marque comme visitée
+        visited = [cell]
+        # Tant que toutes les cellules ne sont pas visitées
+        while len(visited) < h*w:
+            # On choisit une cellule au hasard
+            cell = (randint(0, h-1), randint(0, w-1))
+            while cell in visited:
+                cell = (randint(0, h-1), randint(0, w-1))
+            # Effectuer une marche aléatoire
+            path = [cell]
+            # Tant que la cellule atteinte n'est pas visitée
+            while path[-1] not in visited:
+                # On choisit un voisin au hasard
+                goTo = choice(m.get_contiguous_cells(path[-1]))
+                if goTo in path:
+                    # On supprime les cellules jusqu'à la cellule atteinte
+                    path = path[:path.index(goTo)+1]
+                # On ajoute ce voisin à la marche
+                else:
+                    path.append(goTo)
+
+            # On supprime les murs entre la cellule de départ et la cellule atteinte
+            for i in range(len(path)-1):
+                m.remove_wall(path[i], path[i+1])
+            # On marque toutes les cellules de la marche comme visitées
+            visited += path[:-1]
+        return m
