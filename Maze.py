@@ -189,3 +189,14 @@ class Maze:
         if c[1] < self.width-1:
             cells.append((c[0], c[1]+1))
         return cells
+    
+    def get_reachable_cells(self, c):
+        """
+        Retourne la liste des cellules accessibles depuis une cellule donnée
+        Paramètre:
+            c : cellule
+        Retour:
+            liste de cellules
+        """
+        neighbors = self.neighbors[c]
+        return [cell for cell in self.get_contiguous_cells(c) if cell in neighbors]
