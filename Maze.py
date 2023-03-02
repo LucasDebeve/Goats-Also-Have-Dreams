@@ -7,16 +7,33 @@ class Maze:
       - clés : sommets
       - valeurs : ensemble des sommets voisins accessibles
     """
-    def __init__(self, height, width):
+
+    def __init__(self, height, width, empty=False):
         """
-        Constructeur d'un labyrinthe de height cellules de haut 
-        et de width cellules de large 
-        Les voisinages sont initialisés à des ensembles vides
-        Remarque : dans le labyrinthe créé, chaque cellule est complètement emmurée
-        """
-        self.height    = height
-        self.width     = width
-        self.neighbors = {(i,j): set() for i in range(height) for j in range (width)}
+         Constructeur d'un labyrinthe de height cellules de haut
+         et de width cellules de large
+         Les voisinages sont initialisés à des ensembles vides
+         Remarque : dans le labyrinthe créé, chaque cellule est complètement emmurée
+         """
+        self.height = height
+        self.width = width
+        if not empty:
+            self.neighbors = {(i, j): set() for i in range(height)
+                              for j in range(width)}
+        else:
+            # Initialisation des voisins
+            self.neighbors = {}
+            for i in range(height):
+                for j in range(width):
+                    self.neighbors[(i, j)] = set()
+                    if i > 0:
+                        self.neighbors[(i, j)].add((i-1, j))
+                    if i < height-1:
+                        self.neighbors[(i, j)].add((i+1, j))
+                    if j > 0:
+                        self.neighbors[(i, j)].add((i, j-1))
+                    if j < width-1:
+                        self.neighbors[(i, j)].add((i, j+1))
 
     def info(self):
         """
@@ -56,17 +73,20 @@ class Maze:
         txt += "━━━┓\n"
         txt += "┃"
         for j in range(self.width-1):
-            txt += "   ┃" if (0,j+1) not in self.neighbors[(0,j)] else "    "
+            txt += "   ┃" if (0, j+1) not in self.neighbors[(0, j)] else "    "
         txt += "   ┃\n"
         # Lignes normales
         for i in range(self.height-1):
             txt += "┣"
             for j in range(self.width-1):
-                txt += "━━━╋" if (i+1,j) not in self.neighbors[(i,j)] else "   ╋"
-            txt += "━━━┫\n" if (i+1,self.width-1) not in self.neighbors[(i,self.width-1)] else "   ┫\n"
+                txt += "━━━╋" if (i+1,
+                                  j) not in self.neighbors[(i, j)] else "   ╋"
+            txt += "━━━┫\n" if (i+1, self.width -
+                                1) not in self.neighbors[(i, self.width-1)] else "   ┫\n"
             txt += "┃"
             for j in range(self.width):
-                txt += "   ┃" if (i+1,j+1) not in self.neighbors[(i+1,j)] else "    "
+                txt += "   ┃" if (i+1, j +
+                                  1) not in self.neighbors[(i+1, j)] else "    "
             txt += "\n"
         # Bas du tableau
         txt += "┗"
@@ -75,3 +95,22 @@ class Maze:
         txt += "━━━┛\n"
 
         return txt
+
+    def add_wall(self, c1, c2):
+        """
+        Ajoute un mur entre deux cellules adjacentes
+        Paramètres:
+            c1 (tuple), c2 (tuple): cellules adjacentes
+        """
+        # Facultatif : on teste si les sommets sont bien dans le labyrinthe
+        assert 0 <= c1[0] < self.height and \
+            0 <= c1[1] < self.width and \
+            0 <= c2[0] < self.height and \
+            0 <= c2[1] < self.width, \
+            f"Erreur lors de l'ajout d'un mur entre {c1} et {c2} : les coordonnées de sont pas compatibles avec les dimensions du labyrinthe"
+        # Ajout du mur
+        if c2 in self.neighbors[c1]:      # Si c2 est dans les voisines de c1
+            self.neighbors[c1].remove(c2)  # on le retire
+        if c1 in self.neighbors[c2]:      # Si c3 est dans les voisines de c2
+            self.neighbors[c2].remove(c1)  # on le retire
+
