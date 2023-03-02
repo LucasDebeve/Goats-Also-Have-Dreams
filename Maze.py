@@ -526,3 +526,15 @@ class Maze:
                 int : distance géodésique entre c1 et c2
         """
         return len(self.solve_bfs(c1, c2))-1
+    
+    def distance_man(self, c1, c2):
+        """
+            Calcul la distance de Manhattan entre la cellule c1 et la cellule c2,
+            c'est à dire le nombre minimal de déplacements nécessaires pour aller de c1 à c2
+            si le labyrinthe était vide de tout mur
+            Paramètres:
+                c1, c2 : cellules
+            Retour:
+                int : distance de Manhattan entre c1 et c2
+        """
+        return abs(c1[0]-c2[0])+abs(c1[1]-c2[1])
