@@ -26,6 +26,7 @@ class Game:
         self.running = True
         self.width = width
         self.height = height
+        self.nLevel = 0
         self.newLevel(0)
         # Ajout de la musique - A ajouter
         mixer.music.load("./assets/sounds/music.wav")
@@ -35,55 +36,65 @@ class Game:
         self.run()
     
     def newLevel(self, difficulty : float) -> None:
-        # Verifie l'existance d'un niveau precedent
-        if difficulty != 0:
-            self.display_message(
-            "Niveau suivant", (255, 255, 0), size=150, delay=1000)
+        if self.nLevel == 14:
+            # Ecran de fin
+            self.display_message("Fin du jeu", (255, 255, 0), size=150, delay=1000)
         else:
-            self.difficulty = 0
+            # Verifie l'existance d'un niveau precedent
+            if difficulty != 0:
+                # Jouer le son de victoire
+                mixer.music.load(f"./assets/sounds/{self.nLevel}.mp3")
+                mixer.music.play()
+                # Afficher le message de victoire
+                self.display_message(
+                "Niveau suivant", (255, 255, 0), size=150, delay=1000)
+            else:
+                self.difficulty = 0
+            self.nLevel += 1
+            self.items_sprites = pygame.sprite.Group()
+            # Génération du labyrinthe
+            i = 0
+            while self.difficulty <= difficulty:
+                i += 1
+                if i < 20:
+                    self.maze = Maze.gen_fusion(self.height, self.width)
+                    print(self.maze)
+                    self.difficulty = round(self.maze.distance_geo(
+                        (0, 0), (self.height-1, self.width-1)) / self.maze.distance_man((0, 0), (self.height-1, self.width-1)), 2)
+                    print(self.difficulty)
+                else:
+                    self.width += 1
+                    self.height += 1
+                    i = 0
+            self.maze_surface = pygame.Surface(
+                (2*self.width * CELL_SIZE, 2*self.height * CELL_SIZE))
+            self.maze_surface.fill((50, 50, 50))
+            self.mat = self.maze.get_mat()
 
-        self.items_sprites = pygame.sprite.Group()
+            # Ajout du joueur
+            self.player = Player(
+                self, STARTPOS[0], STARTPOS[1])
+            self.obstacles_sprites = pygame.sprite.Group()
 
+            # Ajout de la fin du niveau
+            self.endPoint = Item(self, 2*self.width*CELL_SIZE-0.75*CELL_SIZE,
+                                2*self.height*CELL_SIZE-0.75*CELL_SIZE, 0, "assets/endPoint.png")
+            self.items_sprites.add(self.endPoint)
+            self.cam_x = 0
+            self.cam_y = 0
+            self.isPaused = False
 
-        # Génération du labyrinthe
-        while self.difficulty <= difficulty:
-            self.width += 1
-            self.height += 1
-            
-            self.maze = Maze.gen_fusion(self.height, self.width)
-            print(self.maze)
-            self.difficulty = round(self.maze.distance_geo(
-                (0, 0), (self.height-1, self.width-1)) / self.maze.distance_man((0, 0), (self.height-1, self.width-1)), 2)
-            print(self.difficulty)
-        self.maze_surface = pygame.Surface(
-            (2*self.width * CELL_SIZE, 2*self.height * CELL_SIZE))
-        self.maze_surface.fill((50, 50, 50))
-        self.mat = self.maze.get_mat()
-
-        # Ajout du joueur
-        self.player = Player(
-            self, STARTPOS[0], STARTPOS[1])
-        self.obstacles_sprites = pygame.sprite.Group()
-
-        # Ajout de la fin du niveau
-        self.endPoint = Item(self, 2*self.width*CELL_SIZE-0.75*CELL_SIZE,
-                             2*self.height*CELL_SIZE-0.75*CELL_SIZE, 0, "assets/endPoint.png")
-        self.items_sprites.add(self.endPoint)
-        self.cam_x = 0
-        self.cam_y = 0
-        self.isPaused = False
-
-        # Ajout des items de vie
-        self.potion = []
-        for i in range(0, 3):
-            x = randrange(1, 2*self.width-1, 2)
-            y = randrange(1, 2*self.height-1, 2)
-            while (x,y) == (1,1) or (x,y) == (2*self.width-1,2*self.height-1):
+            # Ajout des items de vie
+            self.potion = []
+            for i in range(0, self.width * self.height // 10):
                 x = randrange(1, 2*self.width-1, 2)
                 y = randrange(1, 2*self.height-1, 2)
-            self.potion.append(Item(self, CELL_SIZE*x+0.25*CELL_SIZE,
-                               CELL_SIZE*y+0.25*CELL_SIZE, 2, "assets/potion.png"))
-            self.items_sprites.add(self.potion[-1])
+                while (x,y) == (1,1) or (x,y) == (2*self.width-1,2*self.height-1):
+                    x = randrange(1, 2*self.width-1, 2)
+                    y = randrange(1, 2*self.height-1, 2)
+                self.potion.append(Item(self, CELL_SIZE*x+0.25*CELL_SIZE,
+                                CELL_SIZE*y+0.25*CELL_SIZE, 2, "assets/potion.png"))
+                self.items_sprites.add(self.potion[-1])
     
     def run(self) -> None:
         # Boucle du jeu
@@ -185,6 +196,5 @@ class Game:
 
 if __name__ == "__main__":
     g = Game(5,5)
-    g.new()
     pygame.quit()
     sys.exit()
