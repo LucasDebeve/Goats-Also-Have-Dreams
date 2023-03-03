@@ -18,6 +18,7 @@ PLAYER_HEIGHT = CELL_SIZE/2
 # Couleurs
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+RED = (255, 0, 0)
 
 # Item info
 
@@ -27,3 +28,4 @@ ITEM_HEIGHT = CELL_SIZE/2
 # Wall and path info
 WALL = 0
 PATH = 1
+SOLUCE = 2

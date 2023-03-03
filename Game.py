@@ -9,6 +9,7 @@ from Maze import Maze
 from Player import Player
 from Item import Item
 from debug import *
+from time import time
 
 
 class Game:
@@ -37,15 +38,15 @@ class Game:
     
     def newLevel(self, difficulty : float) -> None:
         if self.nLevel == 14:
-            # Ecran de fin
+            # Écran de fin
             self.display_message("Fin du jeu", (255, 255, 0), size=150, delay=1000)
         else:
-            # Verifie l'existance d'un niveau precedent
+            # Vérifie l’existante d'un niveau precedent
             if difficulty != 0:
                 # Jouer le son de victoire
                 Sound = mixer.Sound(f"./assets/sounds/{self.nLevel}.mp3")
                 mixer.Sound.play(Sound)
-                # Recuperer la durée de la musique
+                # Récupérer la durée de la musique
                 duration = mixer.Sound.get_length(Sound)
                 # Afficher le message de victoire
                 self.display_message(
@@ -56,18 +57,18 @@ class Game:
             self.items_sprites = pygame.sprite.Group()
             # Génération du labyrinthe
             i = 0
-            while self.difficulty <= difficulty:
+            while self.difficulty <= difficulty or (difficulty != 0 and self.difficulty > difficulty + 0.1) or (difficulty == 0 and self.difficulty > 1.1):
                 i += 1
                 if i < 20:
                     self.maze = Maze.gen_fusion(self.height, self.width)
-                    print(self.maze)
                     self.difficulty = round(self.maze.distance_geo(
                         (0, 0), (self.height-1, self.width-1)) / self.maze.distance_man((0, 0), (self.height-1, self.width-1)), 2)
-                    print(self.difficulty)
                 else:
                     self.width += 1
                     self.height += 1
                     i = 0
+            print(self.maze)
+            print(self.difficulty)
             self.maze_surface = pygame.Surface(
                 (2*self.width * CELL_SIZE, 2*self.height * CELL_SIZE))
             self.maze_surface.fill((50, 50, 50))
@@ -86,17 +87,34 @@ class Game:
             self.cam_y = 0
             self.isPaused = False
 
-            # Ajout des items de vie
+            # Ajout des items
             self.potion = []
+            self.ariane = []
+            itemsCoords = [(1,1), (2*self.width-1,2*self.height-1)]
             for i in range(0, self.width * self.height // 10):
+                # Potion de vie
                 x = randrange(1, 2*self.width-1, 2)
                 y = randrange(1, 2*self.height-1, 2)
-                while (x,y) == (1,1) or (x,y) == (2*self.width-1,2*self.height-1):
+                while (x,y) in itemsCoords:
                     x = randrange(1, 2*self.width-1, 2)
                     y = randrange(1, 2*self.height-1, 2)
+                itemsCoords.append((x,y))
                 self.potion.append(Item(self, CELL_SIZE*x+0.25*CELL_SIZE,
                                 CELL_SIZE*y+0.25*CELL_SIZE, 2, "assets/potion.png"))
                 self.items_sprites.add(self.potion[-1])
+                
+                # Fil d'Ariane
+                if i % 5 == 0:
+                    x1 = randrange(1, 2*self.width-1, 2)
+                    y1 = randrange(1, 2*self.height-1, 2)
+                    while (x1,y1) in itemsCoords:
+                        x1 = randrange(1, 2*self.width-1, 2)
+                        y1 = randrange(1, 2*self.height-1, 2)
+                    itemsCoords.append((x1,y1))
+                    self.ariane.append(Item(self, CELL_SIZE*x1+0.25*CELL_SIZE,
+                                    CELL_SIZE*y1+0.25*CELL_SIZE, 1, "assets/ariane.png"))
+                    self.items_sprites.add(self.ariane[-1])
+
     
     def run(self) -> None:
         # Boucle du jeu
@@ -144,8 +162,9 @@ class Game:
                     self.isPaused = True
                     self.newLevel(self.difficulty)
                 elif hit.id == 1:
-                    # Fil d'ariane
-                    pass
+                    soluce = self.maze.solve_dfs((-self.cam_y//(2*CELL_SIZE), -self.cam_x//(2*CELL_SIZE)), (self.width-1, self.height-1))
+                    self.start_time = time()
+                    self.display_soluce(soluce)
                 elif hit.id == 2:
                     self.player.addLife()
                 elif hit.id == 3:
@@ -170,15 +189,24 @@ class Game:
                     obstacle.rect.x = j * CELL_SIZE + self.cam_x
                     obstacle.rect.y = i * CELL_SIZE + self.cam_y
                     self.obstacles_sprites.add(obstacle)
-                elif self.mat[i][j] == PATH:
+                else:
                     pygame.draw.rect(self.maze_surface, WHITE, (j * CELL_SIZE,
                                                                 i * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+                if SOLUCE in self.mat[i]:
+                    if self.mat[i][j] == SOLUCE:
+                        font = pygame.font.SysFont("comicsansms", 15)
+                        text = font.render(f"{i},{j}", True, (255, 0, 0))
+                        pygame.draw.rect(self.maze_surface, RED, (j * CELL_SIZE+1/3*CELL_SIZE,
+                                                                    i * CELL_SIZE+1/3*CELL_SIZE, CELL_SIZE//3, CELL_SIZE//3))
+                    if time() - self.start_time >= 2:
+                        self.hideSoluce()
+
         for item in self.items_sprites:
             item.rect.x = item.x + self.cam_x
             item.rect.y = item.y + self.cam_y
             item.render(self.maze_surface)
         # Debug FPS
-        debug(str(int(self.clock.get_fps())), 10, 10)
+        debug(f"{self.cam_x} {self.cam_y}", 10, 10)
 
         # Afficher le labyrinthe
         self.screen.blit(self.maze_surface, (self.cam_x, self.cam_y))
@@ -194,6 +222,18 @@ class Game:
         pygame.display.flip()
         pygame.time.delay(delay)
 
+    def display_soluce(self, soluce : list) -> None:
+        self.hideSoluce()
+        for i in range(len(soluce)-1):
+            self.mat[(soluce[i][0])*2+1][(soluce[i][1])*2+1] = SOLUCE
+            # Moyenne entre les deux coordonnées adjacentes
+            self.mat[((soluce[i][0]*2+1)+(soluce[i+1][0])*2+1)//2][((soluce[i][1]*2+1)+(soluce[i+1][1])*2+1)//2] = SOLUCE
+
+    def hideSoluce(self) -> None:
+        for i in range(len(self.mat)):
+            for j in range(len(self.mat[i])):
+                if self.mat[j][i] == SOLUCE:
+                    self.mat[j][i] = PATH
 
 
 if __name__ == "__main__":
