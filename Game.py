@@ -4,7 +4,9 @@ import sys
 # Importation des constantes
 from settings import *
 # Importation des classes
-
+from Maze import Maze
+from Player import Player
+from debug import *
 
 class Game:
     def __init__(self, width : int, height : int) -> None:
