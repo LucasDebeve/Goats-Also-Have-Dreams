@@ -119,7 +119,7 @@ class Maze:
         """
         Supprime un mur entre deux cellules adjacentes
         Paramètres:
-            c1, c2 : cellules adjacentes
+            c1 (tuple), c2 (tuple): cellules adjacentes
         """
         # on teste si les sommets sont bien dans le labyrinthe
         assert 0 <= c1[0] < self.height and \
@@ -138,16 +138,7 @@ class Maze:
             Retourne la liste des murs du labyrinthe
             Retour:
                 walls (list) : liste de couples de cellules
-            
-            ref = Maze(self.height, self.width, empty=True)
-            walls = list(set((c1, c2) if c1 < c2 else (c2, c1)
-                        for c1 in ref.neighbors.keys() for c2 in ref.neighbors[c1]))
-
-            for c1 in self.neighbors.keys():
-                for c2 in self.neighbors[c1]:
-                    while (c1, c2) in walls:
-                        walls.remove((c1, c2))
-            return walls"""
+            """
             # Liste des murs
             L = []
             # Pour chaque cellule c1 de la grille
@@ -208,9 +199,9 @@ class Maze:
         """
         Retourne la liste des cellules accessibles depuis une cellule donnée
         Paramètre:
-            c : cellule
+            c (tuple): cellule
         Retour:
-            liste de cellules
+            liste (list): liste de cellules
         """
         neighbors = self.neighbors[c]
         return [cell for cell in self.get_contiguous_cells(c) if cell in neighbors]
@@ -220,7 +211,7 @@ class Maze:
         """
         Génère un labyrinthe aléatoire selon l'algorithme de génération par arbre binaire
         Paramètres:
-            h, w : dimensions du labyrinthe
+            h (int), w (int) : dimensions du labyrinthe
         """
         m = Maze(h, w, empty=False)
         for cell in m.neighbors.keys():
@@ -241,12 +232,12 @@ class Maze:
         """
         Génère un labyrinthe aléatoire selon l'algorithme de génération de Sidewinder
         Paramètres:
-            h, w : dimensions du labyrinthe
+            h (int), w (int) : dimensions du labyrinthe
         """
         """
         Génère un labyrinthe aléatoire selon l'algorithme de génération de Sidewinder
         Paramètres:
-            h, w : dimensions du labyrinthe
+            h (int), w (int) : dimensions du labyrinthe
         """
         m = Maze(h, w, empty=False)
         for i in range(h):
@@ -274,7 +265,7 @@ class Maze:
         """
         Génère un labyrinthe aléatoire selon l'algorithme de génération de fusion
         Paramètres:
-            h, w : dimensions du labyrinthe
+            h (int), w (int) : dimensions du labyrinthe
         """
         m = Maze(h, w, empty=False)
         # Labeliser les cellules avec un entier de 1 à h*w-1
@@ -303,7 +294,7 @@ class Maze:
         """
         Génère un labyrinthe aléatoire selon l'algorithme de génération par exploration
         Paramètres:
-            h, w : dimensions du labyrinthe
+            h (int), w (int): dimensions du labyrinthe
         """
         m = Maze(h, w, empty=False)
         # On choisit une cellule au hasard
@@ -340,7 +331,7 @@ class Maze:
         """
         Génère un labyrinthe aléatoire selon l'algorithme de génération de Wilson
         Paramètres:
-            h, w : dimensions du labyrinthe
+            h (int), w (int) : dimensions du labyrinthe
         """
         m = Maze(h, w, empty=False)
         # On choisit une cellule au hasard
@@ -380,7 +371,7 @@ class Maze:
         Argument:
             content (dict) : dictionnaire tq content[cell] contient le caractère à afficher au milieu de la cellule
         Retour:
-            string
+            chaine (str) : représentation du labyrinthe avec le contenu
         """
         if content is None:
             content = {(i, j): ' ' for i in range(self.height)
@@ -423,9 +414,9 @@ class Maze:
         """
         Résout un labyrinthe en utilisant l'algorithme de recherche en profondeur
         Paramètres:
-            start, stop : cellules de départ et d'arrivée
+            start (tuple), stop(tuple) : cellules de départ et d'arrivée
         Retour:
-            list : liste des cellules du chemin trouvé
+            liste (list) : liste des cellules du chemin trouvé
         """
         # Initialisation de la pile
         pile = [start]
@@ -472,9 +463,9 @@ class Maze:
         """
         Résout un labyrinthe en utilisant l'algorithme de recherche en largeur
         Paramètres:
-            start, stop : cellules de départ et d'arrivée
+            start (tuple), stop (tuple) : cellules de départ et d'arrivée
         Retour:
-            list : liste des cellules du chemin trouvé
+            liste (list) : liste des cellules du chemin trouvé
         """
         # Initialisation de la file
         file = [start]
@@ -521,9 +512,9 @@ class Maze:
             Calcul la distance géodésique entre la cellule c1 et la cellule c2,
             c'est à dire le nombre minimal de déplacements nécessaires pour aller de c1 à c2
             Paramètres:
-                c1, c2 : cellules
+                c1 (tuple), c2 (tuple) : cellules
             Retour:
-                int : distance géodésique entre c1 et c2
+                distance (int) : distance géodésique entre c1 et c2
         """
         return len(self.solve_bfs(c1, c2))-1
     
@@ -533,9 +524,9 @@ class Maze:
             c'est à dire le nombre minimal de déplacements nécessaires pour aller de c1 à c2
             si le labyrinthe était vide de tout mur
             Paramètres:
-                c1, c2 : cellules
+                c1 (tuple), c2 (tuple) : cellules
             Retour:
-                int : distance de Manhattan entre c1 et c2
+                distance (int) : distance de Manhattan entre c1 et c2
         """
         return abs(c1[0]-c2[0])+abs(c1[1]-c2[1])
     
@@ -544,7 +535,9 @@ class Maze:
     # contenant des 0 pour les murs et des 1 pour les cases vides
     def get_mat(self):
         """
-            Retourne la matrice représentant le labyrinthe, 0 pour un mur, 1 pour une cellule libre
+            Génère le tableau 2D représentant le labyrinthe, 0 pour un mur, 1 pour une cellule libre
+            Retour:
+                mat (list) : tableau 2D représentant le labyrinthe
         """
         # Initialisation de la matrice à 0
         mat = []
