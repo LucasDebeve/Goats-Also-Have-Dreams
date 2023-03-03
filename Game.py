@@ -83,8 +83,8 @@ class Game:
             self.endPoint = Item(self, 2*self.width*CELL_SIZE-0.75*CELL_SIZE,
                                 2*self.height*CELL_SIZE-0.75*CELL_SIZE, 0, "assets/endPoint.png")
             self.items_sprites.add(self.endPoint)
-            self.cam_x = 0
-            self.cam_y = 0
+            self.cam_x = int(STARTPOS[0]-1.2*CELL_SIZE)
+            self.cam_y = int(STARTPOS[1]-1.2*CELL_SIZE)
             self.isPaused = False
 
             # Ajout des items
@@ -142,6 +142,7 @@ class Game:
                     self.player.move_right()
 
     def update(self):
+        print(self.cam_x, self.cam_y)
         # Music loop
         if not mixer.music.get_busy():
             mixer.music.play(-1)
@@ -162,7 +163,7 @@ class Game:
                     self.isPaused = True
                     self.newLevel(self.difficulty)
                 elif hit.id == 1:
-                    soluce = self.maze.solve_dfs((-self.cam_y//(2*CELL_SIZE), -self.cam_x//(2*CELL_SIZE)), (self.width-1, self.height-1))
+                    soluce = self.maze.solve_dfs((-(self.cam_y-int(STARTPOS[1]-1.2*CELL_SIZE))//(2*CELL_SIZE), -(self.cam_x-int(STARTPOS[0]-1.2*CELL_SIZE))//(2*CELL_SIZE)), (self.width-1, self.height-1))
                     self.start_time = time()
                     self.display_soluce(soluce)
                 elif hit.id == 2:
@@ -194,8 +195,6 @@ class Game:
                                                                 i * CELL_SIZE, CELL_SIZE, CELL_SIZE))
                 if SOLUCE in self.mat[i]:
                     if self.mat[i][j] == SOLUCE:
-                        font = pygame.font.SysFont("comicsansms", 15)
-                        text = font.render(f"{i},{j}", True, (255, 0, 0))
                         pygame.draw.rect(self.maze_surface, RED, (j * CELL_SIZE+1/3*CELL_SIZE,
                                                                     i * CELL_SIZE+1/3*CELL_SIZE, CELL_SIZE//3, CELL_SIZE//3))
                     if time() - self.start_time >= 2:
@@ -218,7 +217,7 @@ class Game:
         font = pygame.font.SysFont("timesnewroman", size)
         text = font.render(message, 1, color, background)
         self.screen.blit(text, (WIDTH/2 - text.get_width() /
-                         2, HEIGHT/2 - text.get_height()/2))
+                         2, HEIGHT/3 - text.get_height()/2))
         pygame.display.flip()
         pygame.time.delay(delay)
 
@@ -227,7 +226,7 @@ class Game:
         for i in range(len(soluce)-1):
             self.mat[(soluce[i][0])*2+1][(soluce[i][1])*2+1] = SOLUCE
             # Moyenne entre les deux coordonnées adjacentes
-            self.mat[((soluce[i][0]*2+1)+(soluce[i+1][0])*2+1)//2][((soluce[i][1]*2+1)+(soluce[i+1][1])*2+1)//2] = SOLUCE
+            self.mat[((soluce[i][0]*2+1)+(soluce[i+1][0])*2+1)//2] [((soluce[i][1]*2+1)+(soluce[i+1][1])*2+1)//2] = SOLUCE
 
     def hideSoluce(self) -> None:
         for i in range(len(self.mat)):

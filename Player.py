@@ -11,6 +11,8 @@ class Player(pygame.sprite.Sprite):
         # Changer la taille de l'image
         self.image = pygame.image.load("./assets/anims/player/right1.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (PLAYER_WIDTH, PLAYER_HEIGHT))
+        # Afficher les contours de l'image
+        self.image.set_colorkey(BLACK)
         
         # Animation
         self.imagesRight = []
@@ -68,8 +70,8 @@ class Player(pygame.sprite.Sprite):
         # Respawn du joueur
         if self.health > 1:
             self.health -= 1
-            self.game.cam_x = 0
-            self.game.cam_y = 0
+            self.game.cam_x = STARTPOS[0]-1.2*CELL_SIZE
+            self.game.cam_y = STARTPOS[1]-1.2*CELL_SIZE
             # Afficher un message de mort
             self.game.display_message(f"/tp @p 0 0 : {self.health} vies", (255,0,0), size=100)
             pygame.time.delay(1000)
