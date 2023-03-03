@@ -43,11 +43,13 @@ class Game:
             # Verifie l'existance d'un niveau precedent
             if difficulty != 0:
                 # Jouer le son de victoire
-                mixer.music.load(f"./assets/sounds/{self.nLevel}.mp3")
-                mixer.music.play()
+                Sound = mixer.Sound(f"./assets/sounds/{self.nLevel}.mp3")
+                mixer.Sound.play(Sound)
+                # Recuperer la durée de la musique
+                duration = mixer.Sound.get_length(Sound)
                 # Afficher le message de victoire
                 self.display_message(
-                "Niveau suivant", (255, 255, 0), size=150, delay=1000)
+                "Niveau suivant", (255, 255, 0), size=150, delay=int(duration*1000+500))
             else:
                 self.difficulty = 0
             self.nLevel += 1
