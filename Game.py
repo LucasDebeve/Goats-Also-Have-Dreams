@@ -1,12 +1,15 @@
 import pygame
 from pygame import mixer
 import sys
+from random import randrange
 # Importation des constantes
 from settings import *
 # Importation des classes
 from Maze import Maze
 from Player import Player
+from Item import Item
 from debug import *
+
 
 class Game:
     def __init__(self, width : int, height : int) -> None:
@@ -25,7 +28,7 @@ class Game:
         self.height = height
         self.newLevel(0)
         # Ajout de la musique - A ajouter
-        mixer.music.load("assets/sounds/music.wav")
+        mixer.music.load("./assets/sounds/music.wav")
         mixer.music.play(-1)
 
         # Lancer le jeu
@@ -41,6 +44,7 @@ class Game:
 
         self.items_sprites = pygame.sprite.Group()
 
+
         # Génération du labyrinthe
         while self.difficulty <= difficulty:
             self.width += 1
@@ -55,14 +59,39 @@ class Game:
             (2*self.width * CELL_SIZE, 2*self.height * CELL_SIZE))
         self.maze_surface.fill((50, 50, 50))
         self.mat = self.maze.get_mat()
+
+        # Ajout du joueur
+        self.player = Player(
+            self, STARTPOS[0], STARTPOS[1])
+        self.obstacles_sprites = pygame.sprite.Group()
+
+        # Ajout de la fin du niveau
+        self.endPoint = Item(self, 2*self.width*CELL_SIZE-0.75*CELL_SIZE,
+                             2*self.height*CELL_SIZE-0.75*CELL_SIZE, 0, "assets/endPoint.png")
+        self.items_sprites.add(self.endPoint)
+        self.cam_x = 0
+        self.cam_y = 0
+        self.isPaused = False
+
+        # Ajout des items de vie
+        self.potion = []
+        for i in range(0, 3):
+            x = randrange(1, 2*self.width-1, 2)
+            y = randrange(1, 2*self.height-1, 2)
+            while (x,y) == (1,1) or (x,y) == (2*self.width-1,2*self.height-1):
+                x = randrange(1, 2*self.width-1, 2)
+                y = randrange(1, 2*self.height-1, 2)
+            self.potion.append(Item(self, CELL_SIZE*x+0.25*CELL_SIZE,
+                               CELL_SIZE*y+0.25*CELL_SIZE, 2, "assets/potion.png"))
+            self.items_sprites.add(self.potion[-1])
     
     def run(self) -> None:
         # Boucle du jeu
         while self.running:
             self.clock.tick(FPS)
-            self.events()
+            self.handling_event()
             self.update()
-            self.draw()
+            self.display()
     
     def handling_event(self) -> None:
         for event in pygame.event.get():
@@ -155,7 +184,7 @@ class Game:
 
 
 if __name__ == "__main__":
-    g = Game()
+    g = Game(5,5)
     g.new()
     pygame.quit()
     sys.exit()
