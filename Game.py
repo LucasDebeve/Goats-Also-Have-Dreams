@@ -130,13 +130,21 @@ class Game:
             print(self.difficulty)
 
     def main_menu(self):
-        font = pygame.font.SysFont("arial", 50)
-        title_font = pygame.font.SysFont("arial", 70)
+        sub_font = pygame.font.SysFont("couriernew", 30)
+        font = pygame.font.SysFont("couriernew", 50)
+        title_font = pygame.font.SysFont("inkfree", 70)
+        isflash = True
+        start_time = time()
         while self.running and self.inMenu:
+            self.screen.fill((0,0,0))
+            if time()-start_time > 0.5:
+                isflash = not isflash
+                start_time = time()
             self.handling_event()
-            self.draw_text("LET'S GOAT", font, WHITE, 100, 50)
-            self.draw_text("PLAY", font, RED, 100, 150)
-            self.draw_text("QUIT", font, WHITE, 100, 200)
+            if isflash:
+                self.draw_text("PRESS SPACE TO PLAY", font, WHITE, 350, 350)
+            self.draw_text("LET'S GOAT", title_font, WHITE, 450, 50)
+            self.draw_text("PRESS ESCAPE TO QUIT", sub_font, RED, 450, 650)
             pygame.display.update()
 
             

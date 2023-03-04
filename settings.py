@@ -19,7 +19,7 @@ PLAYER_HEIGHT = CELL_SIZE//2
 # Couleurs
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-RED = (255, 0, 0)
+RED = (255, 150, 150)
 
 # Item info
 
