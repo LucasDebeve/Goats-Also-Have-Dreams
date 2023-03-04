@@ -25,18 +25,22 @@ class Game:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.clock = pygame.time.Clock()
         self.running = True
+        self.inMenu = True
         self.width = width
         self.height = height
         self.nLevel = 0
-        self.newLevel(0)
-        # Ajout de la musique - A ajouter
+
         mixer.music.load("./assets/sounds/music.wav")
         mixer.music.play(-1)
+        self.main_menu()
+        # Ajout de la musique - A ajouter
+        
 
         # Lancer le jeu
         self.run()
     
     def newLevel(self, difficulty : float) -> None:
+        
         if self.nLevel == 10:
             # Écran de fin
             self.display_message("Fin du jeu", (255, 255, 0), size=150, delay=1000)
@@ -45,6 +49,7 @@ class Game:
             if difficulty != 0:
                 # Jouer le son de victoire
                 Sound = mixer.Sound(f"./assets/sounds/{self.nLevel}.mp3")
+                Sound.set_volume(0.5)
                 mixer.Sound.play(Sound)
                 # Récupérer la durée de la musique
                 duration = mixer.Sound.get_length(Sound)
@@ -52,6 +57,7 @@ class Game:
                 self.display_message(
                 "Niveau suivant", (255, 255, 0), size=150, delay=int(duration*1000+500))
             else:
+                mixer.music.set_volume(0.5)
                 self.difficulty = 0
             self.nLevel += 1
             self.items_sprites = pygame.sprite.Group()
@@ -123,6 +129,17 @@ class Game:
             print(self.maze.overlay(str_solution))
             print(self.difficulty)
 
+    def main_menu(self):
+        font = pygame.font.SysFont("arial", 50)
+        title_font = pygame.font.SysFont("arial", 70)
+        while self.running and self.inMenu:
+            self.handling_event()
+            self.draw_text("LET'S GOAT", font, WHITE, 100, 50)
+            self.draw_text("PLAY", font, RED, 100, 150)
+            self.draw_text("QUIT", font, WHITE, 100, 200)
+            pygame.display.update()
+
+            
 
     def run(self) -> None:
         # Boucle du jeu
@@ -137,17 +154,22 @@ class Game:
             if event.type == pygame.QUIT:
                 if self.running:
                     self.running = False
-
+            if not self.inMenu:
             # Input de déplacement du joueur
-            elif event.type == pygame.KEYDOWN:
-                if not self.isPaused and event.key == pygame.K_UP:
-                    self.player.move_up()
-                elif not self.isPaused and event.key == pygame.K_DOWN:
-                    self.player.move_down()
-                elif not self.isPaused and event.key == pygame.K_LEFT:
-                    self.player.move_left()
-                elif not self.isPaused and event.key == pygame.K_RIGHT:
-                    self.player.move_right()
+                if event.type == pygame.KEYDOWN:
+                    if not self.isPaused and event.key == pygame.K_UP:
+                        self.player.move_up()
+                    elif not self.isPaused and event.key == pygame.K_DOWN:
+                        self.player.move_down()
+                    elif not self.isPaused and event.key == pygame.K_LEFT:
+                        self.player.move_left()
+                    elif not self.isPaused and event.key == pygame.K_RIGHT:
+                        self.player.move_right()
+            else:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    self.newLevel(0)
+                    self.inMenu = False
+
 
     def update(self):
         # Music loop
@@ -243,6 +265,10 @@ class Game:
             for j in range(len(self.mat[i])):
                 if self.mat[j][i] == SOLUCE:
                     self.mat[j][i] = PATH
+
+    def draw_text(self, text, font, text_col, x, y):
+        img = font.render(text, True, text_col)
+        self.screen.blit(img, (x, y))
 
 
 if __name__ == "__main__":
