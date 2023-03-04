@@ -37,7 +37,7 @@ class Game:
         self.run()
     
     def newLevel(self, difficulty : float) -> None:
-        if self.nLevel == 14:
+        if self.nLevel == 10:
             # Écran de fin
             self.display_message("Fin du jeu", (255, 255, 0), size=150, delay=1000)
         else:
@@ -57,18 +57,21 @@ class Game:
             self.items_sprites = pygame.sprite.Group()
             # Génération du labyrinthe
             i = 0
-            while self.difficulty <= difficulty or (difficulty != 0 and self.difficulty > difficulty + 0.1) or (difficulty == 0 and self.difficulty > 1.1):
+            while self.difficulty <= difficulty or (difficulty != 0 and self.difficulty > difficulty + 0.1) or (difficulty == 0 and self.difficulty > 1.05):
                 i += 1
-                if i < 20:
+                if i < 100:
                     self.maze = Maze.gen_fusion(self.height, self.width)
                     self.difficulty = round(self.maze.distance_geo(
                         (0, 0), (self.height-1, self.width-1)) / self.maze.distance_man((0, 0), (self.height-1, self.width-1)), 2)
                 else:
-                    self.width += 1
-                    self.height += 1
+                    self.width += 2
+                    self.height += 2
                     i = 0
-            print(self.maze)
-            print(self.difficulty)
+            
+            # Affichage de la solution dans le terminal
+            solution = self.maze.solve_bfs((0, 0), (self.height-1, self.width-1))
+            str_solution = {c:'*' for c in solution}
+
             self.maze_surface = pygame.Surface(
                 (2*self.width * CELL_SIZE, 2*self.height * CELL_SIZE))
             self.maze_surface.fill((50, 50, 50))
@@ -104,18 +107,23 @@ class Game:
                 self.items_sprites.add(self.potion[-1])
                 
                 # Fil d'Ariane
-                if i % 5 == 0:
+                if i % 5 == 1:
                     x1 = randrange(1, 2*self.width-1, 2)
                     y1 = randrange(1, 2*self.height-1, 2)
                     while (x1,y1) in itemsCoords:
                         x1 = randrange(1, 2*self.width-1, 2)
                         y1 = randrange(1, 2*self.height-1, 2)
                     itemsCoords.append((x1,y1))
+                    str_solution[(int(y1/2),int(x1/2))] = "@"
                     self.ariane.append(Item(self, CELL_SIZE*x1+0.25*CELL_SIZE,
                                     CELL_SIZE*y1+0.25*CELL_SIZE, 1, "assets/ariane.png"))
                     self.items_sprites.add(self.ariane[-1])
 
-    
+            
+            print(self.maze.overlay(str_solution))
+            print(self.difficulty)
+
+
     def run(self) -> None:
         # Boucle du jeu
         while self.running:
@@ -142,7 +150,6 @@ class Game:
                     self.player.move_right()
 
     def update(self):
-        print(self.cam_x, self.cam_y)
         # Music loop
         if not mixer.music.get_busy():
             mixer.music.play(-1)
@@ -163,7 +170,8 @@ class Game:
                     self.isPaused = True
                     self.newLevel(self.difficulty)
                 elif hit.id == 1:
-                    soluce = self.maze.solve_dfs((-(self.cam_y-int(STARTPOS[1]-1.2*CELL_SIZE))//(2*CELL_SIZE), -(self.cam_x-int(STARTPOS[0]-1.2*CELL_SIZE))//(2*CELL_SIZE)), (self.width-1, self.height-1))
+                    print(int( abs(self.cam_y-int(STARTPOS[1]-1.2*CELL_SIZE))//(2*CELL_SIZE)), int( abs((self.cam_x-int(STARTPOS[0]-1.2*CELL_SIZE))//(2*CELL_SIZE)) ) )
+                    soluce = self.maze.solve_dfs((int( abs(self.cam_y-int(STARTPOS[1]-1.2*CELL_SIZE))//(2*CELL_SIZE)), int( abs((self.cam_x-int(STARTPOS[0]-1.2*CELL_SIZE))//(2*CELL_SIZE)) ) ), (self.width-1, self.height-1))
                     self.start_time = time()
                     self.display_soluce(soluce)
                 elif hit.id == 2:
@@ -223,8 +231,10 @@ class Game:
 
     def display_soluce(self, soluce : list) -> None:
         self.hideSoluce()
+        print(soluce)
         for i in range(len(soluce)-1):
             self.mat[(soluce[i][0])*2+1][(soluce[i][1])*2+1] = SOLUCE
+            print("(",((soluce[i][0]*2+1)+(soluce[i+1][0])*2+1)//2, ((soluce[i][1]*2+1)+(soluce[i+1][1])*2+1)//2,")")
             # Moyenne entre les deux coordonnées adjacentes
             self.mat[((soluce[i][0]*2+1)+(soluce[i+1][0])*2+1)//2] [((soluce[i][1]*2+1)+(soluce[i+1][1])*2+1)//2] = SOLUCE
 
