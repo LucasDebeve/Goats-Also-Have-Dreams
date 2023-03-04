@@ -1,7 +1,7 @@
 WIDTH = 1280
 HEIGHT = 720
 FPS = 60
-TITLE = "Let's Goat !"
+TITLE = "Goats also have dreams"
 
 
 # Dimensions du labyrinthe

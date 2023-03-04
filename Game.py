@@ -135,15 +135,17 @@ class Game:
         title_font = pygame.font.SysFont("inkfree", 70)
         isflash = True
         start_time = time()
+        bg = pygame.image.load("assets/ferme.jpg")
+        bg = pygame.transform.scale(bg, (WIDTH, HEIGHT))
         while self.running and self.inMenu:
-            self.screen.fill((0,0,0))
+            self.screen.blit(bg, (0,0))
             if time()-start_time > 0.5:
                 isflash = not isflash
                 start_time = time()
             self.handling_event()
             if isflash:
                 self.draw_text("PRESS SPACE TO PLAY", font, WHITE, 350, 350)
-            self.draw_text("LET'S GOAT", title_font, WHITE, 450, 50)
+            self.draw_text(TITLE.upper(), title_font, WHITE, 200, 50)
             self.draw_text("PRESS ESCAPE TO QUIT", sub_font, RED, 450, 650)
             pygame.display.update()
 
@@ -174,9 +176,12 @@ class Game:
                     elif not self.isPaused and event.key == pygame.K_RIGHT:
                         self.player.move_right()
             else:
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                    self.newLevel(0)
-                    self.inMenu = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.running = False
+                    elif event.key == pygame.K_SPACE:
+                        self.newLevel(0)
+                        self.inMenu = False
 
 
     def update(self):
