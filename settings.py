@@ -6,7 +6,7 @@ TITLE = "Goats also have dreams"
 
 # Dimensions du labyrinthe
 CELL_SIZE = 150
-STARTPOS = (WIDTH//2-0.25*CELL_SIZE,HEIGHT//2-0.25*CELL_SIZE)
+STARTPOS = (WIDTH//2-0.25*CELL_SIZE, HEIGHT//2-0.25*CELL_SIZE)
 # STARTPOS = (CELL_SIZE*1.25,CELL_SIZE*1.25)
 
 # Vitesse du joueur
@@ -20,6 +20,7 @@ PLAYER_HEIGHT = CELL_SIZE//2
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 150, 150)
+WALL_COLOR = (20, 20, 20)
 
 # Item info
 

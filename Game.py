@@ -40,7 +40,8 @@ class Game:
         self.run()
     
     def newLevel(self, difficulty : float) -> None:
-        
+        self.bg = pygame.image.load("assets/space.png")
+        self.bg = pygame.transform.scale(self.bg, (WIDTH, HEIGHT))
         if self.nLevel == 10:
             # Écran de fin
             self.display_message("Fin du jeu", (255, 255, 0), size=150, delay=1000)
@@ -79,7 +80,7 @@ class Game:
             str_solution = {c:'*' for c in solution}
 
             self.maze_surface = pygame.Surface(
-                (2*self.width * CELL_SIZE, 2*self.height * CELL_SIZE))
+                ((2*self.width+1) * CELL_SIZE, (2*self.height+1) * CELL_SIZE))
             self.maze_surface.fill((50, 50, 50))
             self.mat = self.maze.get_mat()
 
@@ -217,14 +218,13 @@ class Game:
                 hit.kill()
     
     def display(self):
-        self.screen.fill((0, 0, 0))
+        self.screen.blit(self.bg, (0,0))
         self.obstacles_sprites.empty()
         # Dessiner le labyrinthe
         for i in range(len(self.mat)):
             for j in range(len(self.mat[i])):
                 if self.mat[i][j] == WALL:
-
-                    pygame.draw.rect(self.maze_surface, BLACK, (j * CELL_SIZE,
+                    pygame.draw.rect(self.maze_surface, WALL_COLOR, (j * CELL_SIZE,
                                                                 i * CELL_SIZE, CELL_SIZE, CELL_SIZE))
                     # Création des obstacles
                     obstacle = pygame.sprite.Sprite()
@@ -247,14 +247,17 @@ class Game:
             item.rect.x = item.x + self.cam_x
             item.rect.y = item.y + self.cam_y
             item.render(self.maze_surface)
-        # Debug FPS
-        debug(f"{self.cam_x} {self.cam_y}", 10, 10)
-
+        
+        debug(self.nLevel, 10, 10)
         # Afficher le labyrinthe
         self.screen.blit(self.maze_surface, (self.cam_x, self.cam_y))
         # Appliquer l'image du joueur
+        
         self.screen.blit(self.player.image, self.player.rect)
+        
         pygame.display.flip()
+        # Debug FPS
+        
 
     def display_message(self, message, color=(255, 255, 255), background=(0, 0, 0), size=30, delay=2000):
         font = pygame.font.SysFont("timesnewroman", size)
