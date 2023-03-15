@@ -15,12 +15,13 @@ Pour jouer au jeu, exécutez le fichier `Game.exe` et **n'oubliez pas, les chèv
 
 ## Nouveautés
 
+- Fichier executable
 - Ajout du fil d'Ariane
 - Ajout des potions
 
 ## A venir
 - Nouvelle item : Bombe
-- Fichiers executable
+- Documentation
 
 ## Bugs
 - Parfois le fil d'Ariane montre la solution depuis la mauvaise cellule
