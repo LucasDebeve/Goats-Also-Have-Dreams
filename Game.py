@@ -1,6 +1,7 @@
 import pygame
 from pygame import mixer
 import sys
+import os
 from random import randrange
 # Importation des constantes
 from settings import *
@@ -11,6 +12,14 @@ from Item import Item
 from debug import *
 from time import time
 
+def resource_path(relative_path):
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath("")
+
+        return os.path.join(base_path, relative_path)
 
 class Game:
     def __init__(self, width : int, height : int) -> None:
@@ -22,7 +31,8 @@ class Game:
         """
         pygame.init()
         pygame.display.set_caption(TITLE)
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        # Fullscreen
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN | pygame.RESIZABLE | pygame.SCALED)
         self.clock = pygame.time.Clock()
         self.running = True
         self.inMenu = True
@@ -30,7 +40,7 @@ class Game:
         self.height = height
         self.nLevel = 0
 
-        mixer.music.load("./assets/sounds/music.wav")
+        mixer.music.load(resource_path("assets/sounds/music.wav"))
         mixer.music.play(-1)
         self.main_menu()
         # Ajout de la musique - A ajouter
@@ -40,7 +50,7 @@ class Game:
         self.run()
     
     def newLevel(self, difficulty : float) -> None:
-        self.bg = pygame.image.load("assets/space.png")
+        self.bg = pygame.image.load(resource_path("assets/space.png"))
         self.bg = pygame.transform.scale(self.bg, (WIDTH, HEIGHT))
         if self.nLevel == 10:
             # Écran de fin
@@ -49,7 +59,7 @@ class Game:
             # Vérifie l’existante d'un niveau precedent
             if difficulty != 0:
                 # Jouer le son de victoire
-                Sound = mixer.Sound(f"./assets/sounds/{self.nLevel}.mp3")
+                Sound = mixer.Sound(resource_path(f"assets/sounds/{self.nLevel}.mp3"))
                 Sound.set_volume(0.5)
                 mixer.Sound.play(Sound)
                 # Récupérer la durée de la musique
@@ -91,7 +101,7 @@ class Game:
 
             # Ajout de la fin du niveau
             self.endPoint = Item(self, 2*self.width*CELL_SIZE-0.75*CELL_SIZE,
-                                2*self.height*CELL_SIZE-0.75*CELL_SIZE, 0, "assets/endPoint.png")
+                                2*self.height*CELL_SIZE-0.75*CELL_SIZE, 0, resource_path("assets/endPoint.png"))
             self.items_sprites.add(self.endPoint)
             self.cam_x = int(STARTPOS[0]-1.2*CELL_SIZE)
             self.cam_y = int(STARTPOS[1]-1.2*CELL_SIZE)
@@ -110,7 +120,7 @@ class Game:
                     y = randrange(1, 2*self.height-1, 2)
                 itemsCoords.append((x,y))
                 self.potion.append(Item(self, CELL_SIZE*x+0.25*CELL_SIZE,
-                                CELL_SIZE*y+0.25*CELL_SIZE, 2, "assets/potion.png"))
+                                CELL_SIZE*y+0.25*CELL_SIZE, 2, resource_path("assets/potion.png")))
                 self.items_sprites.add(self.potion[-1])
                 
                 # Fil d'Ariane
@@ -123,7 +133,7 @@ class Game:
                     itemsCoords.append((x1,y1))
                     str_solution[(int(y1/2),int(x1/2))] = "@"
                     self.ariane.append(Item(self, CELL_SIZE*x1+0.25*CELL_SIZE,
-                                    CELL_SIZE*y1+0.25*CELL_SIZE, 1, "assets/ariane.png"))
+                                    CELL_SIZE*y1+0.25*CELL_SIZE, 1, resource_path("assets/ariane.png")))
                     self.items_sprites.add(self.ariane[-1])
 
             
@@ -136,7 +146,7 @@ class Game:
         title_font = pygame.font.SysFont("inkfree", 70)
         isflash = True
         start_time = time()
-        bg = pygame.image.load("assets/ferme.jpg")
+        bg = pygame.image.load(resource_path("assets/ferme.jpg"))
         bg = pygame.transform.scale(bg, (WIDTH, HEIGHT))
         while self.running and self.inMenu:
             self.screen.blit(bg, (0,0))

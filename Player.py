@@ -1,5 +1,17 @@
 import pygame
 from settings import *
+import os
+import sys
+
+
+def resource_path(relative_path):
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
 
 class Player(pygame.sprite.Sprite):
     def __init__(self,game, x, y):
@@ -9,7 +21,7 @@ class Player(pygame.sprite.Sprite):
         self.maxHelath = 3
         self.velocity = VELOCITY
         # Changer la taille de l'image
-        self.image = pygame.image.load("./assets/anims/player/right1.png").convert_alpha()
+        self.image = pygame.image.load(resource_path("./assets/anims/player/right1.png")).convert_alpha()
         self.image = pygame.transform.scale(self.image, (PLAYER_WIDTH, PLAYER_HEIGHT))
         # Afficher les contours de l'image
         self.image.set_colorkey(BLACK)
@@ -20,10 +32,10 @@ class Player(pygame.sprite.Sprite):
         self.imagesUp = []
         self.imagesDown = []
         for i in range(1,5):
-            self.imagesRight.append(pygame.image.load(f"./assets/anims/player/right{str(i)}.png").convert_alpha())
-            self.imagesLeft.append(pygame.image.load(f"./assets/anims/player/left{str(i)}.png").convert_alpha())
-            self.imagesUp.append(pygame.image.load(f"./assets/anims/player/up{str(i)}.png").convert_alpha())
-            self.imagesDown.append(pygame.image.load(f"./assets/anims/player/down{str(i)}.png").convert_alpha())
+            self.imagesRight.append(pygame.image.load(resource_path(f"./assets/anims/player/right{str(i)}.png")).convert_alpha())
+            self.imagesLeft.append(pygame.image.load(resource_path(f"./assets/anims/player/left{str(i)}.png")).convert_alpha())
+            self.imagesUp.append(pygame.image.load(resource_path(f"./assets/anims/player/up{str(i)}.png")).convert_alpha())
+            self.imagesDown.append(pygame.image.load(resource_path(f"./assets/anims/player/down{str(i)}.png")).convert_alpha())
         self.facing = "RIGHT"
 
         self.index = 0
