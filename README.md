@@ -19,6 +19,7 @@ Quelles surprises vous reserve le cerveau de la chèvre ? A vous de le découvri
 ## A venir
 - Nouvelle item : Bombe
 - Documentation
+- Version exécutable sur Linux
 
 ## Bugs
 - Parfois le fil d'Ariane montre la solution depuis la mauvaise cellule
@@ -26,7 +27,7 @@ Quelles surprises vous reserve le cerveau de la chèvre ? A vous de le découvri
 ## Installation 
 
 Il suffit de télécharger le répertoire `assets` ainsi que l'exécutable `Game.exe`. Vous pouvez par ailleurs  télécharger un fichier compressé depuis les [Releases](https://iut-info.univ-reims.fr/gitlab/debe0033/sae-maze/-/releases).  
-Pour jouer au jeu, exécutez le fichier `Game.exe` et **n'oubliez pas, les chèvres ont aussi des oreilles, donc activez le son**.
+Pour jouer au jeu sur **Windows**, exécutez le fichier `Game.exe` et **n'oubliez pas, les chèvres ont aussi des oreilles, donc activez le son**.
 
 
 
@@ -44,7 +45,7 @@ Pour tester la classe Maze il faut executer le fichier `testMaze.py`. Vous pouve
 
 ## Documentation a venir dans les prochains jours
 
-[Se référer pour le moment, au docstring au sein des fichiers .py]()
+[Se référer pour le moment, au docstring au sein du fichiers `Maze.py`](https://iut-info.univ-reims.fr/gitlab/debe0033/sae-maze/-/blob/main/Maze.py)
 
 
 ## License
