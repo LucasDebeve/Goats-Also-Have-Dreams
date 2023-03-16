@@ -55,6 +55,7 @@ class Game:
         if self.nLevel == 10:
             # Écran de fin
             self.display_message("Fin du jeu", (255, 255, 0), size=150, delay=1000)
+            self.running = False
         else:
             # Vérifie l’existante d'un niveau precedent
             if difficulty != 0:
