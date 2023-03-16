@@ -26,7 +26,7 @@ Quelles surprises vous reserve le cerveau de la chèvre ? A vous de le découvri
 
 ## Installation 
 
-Il suffit de télécharger le répertoire `assets` ainsi que l'exécutable `Game.exe`. Vous pouvez par ailleurs  télécharger un fichier compressé depuis les [Releases](https://iut-info.univ-reims.fr/gitlab/debe0033/sae-maze/-/releases).  
+Il suffit de télécharger l'exécutable `Game.exe`. Vous pouvez par ailleurs  télécharger un fichier compressé. Les fichiers requis sont tous accéssible via les [Releases](https://iut-info.univ-reims.fr/gitlab/debe0033/sae-maze/-/releases).  
 Pour jouer au jeu sur **Windows**, exécutez le fichier `Game.exe` et **n'oubliez pas, les chèvres ont aussi des oreilles, donc activez le son**.
 
 
