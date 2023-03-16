@@ -2,6 +2,9 @@
 
 Ce projet a été réalisé dans le cadre d'une SAE (projet universitaire) et vise à générer et manipuler des labyrinthes parfaits grâce à une classe Maze *(présent dans le fichier `Maze.py`)*.
 
+## Installation 
+
+Il suffit de télécharger le répertoire `assets` ainsi que l'exécutable `Game.exe`. Vous pouvez par ailleurs  télécharger un fichier compressé depuis les [Releases]().
 
 ## Demo
 
